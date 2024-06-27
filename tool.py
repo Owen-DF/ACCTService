@@ -1,23 +1,51 @@
 #Necessarry Libraries
+
 from tkinter import *
 import os
 import pandas as pd
 import openpyxl
 import warnings
-
+import glob
 #functions
 def submit():
 
     directory = Dinput.get('1.0', END).strip()
-    print(directory)
     
     items = IInput.get('1.0', END).strip()
     itemList = items.split(", ")
-    print(itemList)
 
-
-
+    fileNav(directory, itemList)
     return
+
+
+def fileNav(filePath, itemList):
+    matching_folders = []
+    for item in itemList:
+        # Create a pattern to match folders starting with the project code
+        pattern = os.path.join(filePath, f"{item}*")
+        print(f"Searching with pattern: {pattern}")
+        # Use glob to find matching directories
+        for folder in glob.glob(pattern):
+            if os.path.isdir(folder):
+                folder = os.path.join(folder, '03 Estimate & Proposal')
+                if os.path.isdir(folder):
+                    matching_folders.append(folder)
+                    print(f"Found matching folder: {folder}")
+    pullExcel(matching_folders)
+    return
+            
+def pullExcel(matchingFolders):
+    for folder in matchingFolders:
+        pattern = os.path.join(folder, '*.xlsx')
+        print(f"Searching for Excel files with pattern: {pattern}")
+        for file in glob.glob(pattern):
+            print(f"Found Excel File: {file}")
+
+            
+
+
+    
+
 
 
 
