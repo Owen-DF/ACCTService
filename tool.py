@@ -15,6 +15,11 @@ def submit():
     items = IInput.get().strip()
     itemList = items.split(", ")
 
+    # Filter out items that are not 4 characters long
+    itemList = [item for item in itemList if len(item) == 4]
+    
+    
+
     fileNav(directory, itemList)
     return
 
@@ -24,24 +29,27 @@ def fileNav(filePath, itemList):
     for item in itemList:
         # Create a pattern to match folders starting with the project code
         pattern = os.path.join(filePath, f"{item}*")
-        print(f"Searching with pattern: {pattern}")
+        #print(f"Searching with pattern: {pattern}")
         # Use glob to find matching directories
         for folder in glob.glob(pattern):
             if os.path.isdir(folder):
                 folder = os.path.join(folder, '03 Estimate & Proposal')
                 if os.path.isdir(folder):
                     matching_folders.append(folder)
-                    print(f"Found matching folder: {folder}")
+                   # print(f"Found matching folder: {folder}")
+    
     pullExcel(matching_folders)
     return
             
 def pullExcel(matchingFolders):
     ExcelFilePaths = []
+    stepValue=100/(len(matchingFolders))
     for folder in matchingFolders:
         pattern = os.path.join(folder, '*.xlsx')
-        print(f"Searching for Excel files with pattern: {pattern}")
+       # print(f"Searching for Excel files with pattern: {pattern}")
         for file in glob.glob(pattern):
             print(f"Found Excel File: {file}")
+            bar['value'] +=stepValue
             ExcelFilePaths.append(file)
     
    # processExcelFiles(ExcelFilePaths)
@@ -94,5 +102,11 @@ IInput.pack(side="left", fill="x", expand=True, padx=5) # Create & pack entry wi
 button_frame = ttk.Frame(app) # Create a frame for buttons
 button_frame.pack(pady=50, padx=10, fill="x") # Pack frame in app
 ttk.Button(button_frame, text="Submit", command = submit, bootstyle = "success").pack(side="left", padx=10) # Create & pack button
+
+progress_frame = ttk.Frame(app)
+progress_frame.pack(pady=25, padx = 10, fill="x")
+bar = ttk.Progressbar(progress_frame, length = 400, style='Striped.Horizontal.TProgressbar')
+bar.pack()
+
 
 app.mainloop()
