@@ -2,7 +2,9 @@ from tkinter import *
 
 
 
-def submitButton(button):
+def submitButtonD():
+
+
     
 
     return
@@ -20,8 +22,16 @@ w.pack()
 Dinput = Entry(root)
 Dinput.pack()
 
-DButton = Button(root, text = "submit directory", command = submitButton(Dinput))
+DButton = Button(root, text = "submit directory", command = submitButtonD())
 DButton.pack()
+
+Sinput = Text(root, height=5)
+Sinput.pack()
+
+Sinput.insert('1.0', 'Enter each search term seperated by a coma')
+
+SButton = Button(root, text = "submit search terms")
+SButton.pack()
 
 
 root.geometry('500x500')
