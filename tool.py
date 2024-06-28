@@ -32,10 +32,17 @@ def filterProjects(items):
 
     itemList = [item.strip() for item in items.split(",") if item.strip()]
     itemList = [item for item in itemList if len(item) == 4]
-    uniqueList = list(set(itemList))
-
+    uniqueList = remove_duplicates(itemList)
     return uniqueList
 
+def remove_duplicates(item_list):
+    seen = set()
+    unique_list = []
+    for item in item_list:
+        if item not in seen:
+            unique_list.append(item)
+            seen.add(item)
+    return unique_list
 
 
 def fileNav(filePath, itemList):
@@ -52,35 +59,57 @@ def fileNav(filePath, itemList):
                     matching_folders.append(folder)
                    # print(f"Found matching folder: {folder}")
     
-    pullExcel(matching_folders)
+    pullExcel(matching_folders, itemList)
     return
-            
-def pullExcel(matchingFolders):
+
+
+
+def pullExcel(matchingFolders, itemList):
     ExcelFilePaths = []
+
+    if not matchingFolders:
+        print("No folders to process")
+        return
+
     try:
-        stepValue=100/(len(matchingFolders))
-    except ZeroDivisionError as e:
+        stepValue = 100 / len(matchingFolders)
+    except ZeroDivisionError:
         print("Cannot divide by zero, most likely no input in form")
+        return
+
     for folder in matchingFolders:
         excelFiles = []
-        pattern = os.path.join(folder, '*.xlsx')
-       # print(f"Searching for Excel files with pattern: {pattern}")
+        pattern = os.path.join(folder, '*.xlsm')  #these excel files are not xlsx, whoever decided that tbere are different types of excel files deserve something bad, i am cranky
+        print(f"Searching for Excel files with pattern: {pattern}")
+        
         for file in glob.glob(pattern):
             excelFiles.append(file)
-            # print(f"Found Excel File: {file}")
-            bar['value'] +=stepValue
-            app.update_idletasks()
-        if len(excelFiles)>1:
-            mostRecent = max(excelFiles, key=os.path.getatime)
-            ExcelFilePaths.append(mostRecent)
+            print(f"Found Excel File: {file}")
+
+        if excelFiles:
+            if len(excelFiles) > 1:
+                mostRecent = max(excelFiles, key=os.path.getatime)
+                ExcelFilePaths.append(mostRecent)
+            else:
+                ExcelFilePaths.append(excelFiles[0])
         else:
-            ExcelFilePaths.append(file)
-    print(ExcelFilePaths)
-    
-   # processExcelFiles(ExcelFilePaths)
+            print(f"No Excel files found in folder: {folder}")
+        
+        bar['value'] += stepValue
+        app.update_idletasks()
+
+    processExcelFiles(ExcelFilePaths, itemList)
 
 
-def processExcelFiles(list):
+def processExcelFiles(ExcelList, itemList):
+
+    print(ExcelList)
+    print(itemList)
+
+
+
+
+
     items = {
         '01.01': 'G9', '01.02': 'G10', '02.01': 'G21', '02.02': 'G22', '02.03': 'G23',
         '03.01': 'G37', '03.02': 'G38', '03.03': 'G39', '04.01': 'G48', '04.02': 'G49',
@@ -88,9 +117,7 @@ def processExcelFiles(list):
         '05.04': 'G66', '06.01': 'G78', '06.02': 'G79', '06.03': 'G80', '06.04': 'G81',
         '06.05': 'G82', '07.0': 'G90', '08.01': 'G94', '08.02': 'G95', '08.03': 'G96','08.04': 'G97'
     }
-    for file in list:
-        workbook = openpyxl.load_workbook(file, read_only=False, keep_vba=True)
-        worksheet = workbook['JC']
+    
 
 
     

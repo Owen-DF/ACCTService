@@ -52,6 +52,10 @@ def process_excel_file(file_path, search_term, df):
     worksheet[cell] = total_amount
     workbook.save(file_path)
  
+
+
+
+
 file_paths = [
     r'Z:\Projects\02 ACTIVE PROJECTS\9195-Maddox-Transformer Repair-Bronx NY\03 Estimate & Proposal\MTES24-009-Maddox-Transformer Repair-Bronx NY Rev2.xlsm',
 ]
@@ -59,6 +63,7 @@ file_paths = [
 search_terms = [
     '9195',
 ]
+
 df = pd.concat([pd.read_excel(r'Z:\Accounting\13 Python Reports\Yearly Costing.xlsx', sheet_name=sheet_name) for sheet_name in ['2024','2023', '2022', '2021', '2020', '2019', '2018']])
 df.fillna('', inplace=True)
  
