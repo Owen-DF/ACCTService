@@ -7,21 +7,28 @@ import pandas as pd
 import openpyxl
 import warnings
 import glob
+import time
 
 #functions
 def submit():
     directory = DInput.get().strip()
-    
+    bar['value'] = 0
     items = IInput.get().strip()
-    itemList = items.split(", ")
-
-    # Filter out items that are not 4 characters long
-    itemList = [item for item in itemList if len(item) == 4]
-    
-    
-
+    itemList = filterProjects(items)
+    bar.pack()
     fileNav(directory, itemList)
     return
+
+
+
+def filterProjects(items):
+
+    itemList = [item.strip() for item in items.split(",") if item.strip()]
+    itemList = [item for item in itemList if len(item) == 4]
+    uniqueList = list(set(itemList))
+
+    return uniqueList
+
 
 
 def fileNav(filePath, itemList):
@@ -50,6 +57,8 @@ def pullExcel(matchingFolders):
         for file in glob.glob(pattern):
             print(f"Found Excel File: {file}")
             bar['value'] +=stepValue
+            app.update_idletasks()
+            time.sleep(.1)
             ExcelFilePaths.append(file)
     
    # processExcelFiles(ExcelFilePaths)
@@ -105,8 +114,8 @@ ttk.Button(button_frame, text="Submit", command = submit, bootstyle = "success")
 
 progress_frame = ttk.Frame(app)
 progress_frame.pack(pady=25, padx = 10, fill="x")
-bar = ttk.Progressbar(progress_frame, length = 400, style='Striped.Horizontal.TProgressbar')
-bar.pack()
+bar = ttk.Progressbar(progress_frame, length = 400, style='success.Striped.Horizontal.TProgressbar')
+# bar.pack()
 
 
 app.mainloop()
