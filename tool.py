@@ -9,8 +9,15 @@ import warnings
 import glob
 import time
 
+
+#file paths for reference, change here for future file reconstructing
+YEARLY_COSTING = r"Z:\Accounting\13 Python Reports\Yearly Costing.xlsx"
+
+
+
 #functions
 def submit():
+
     directory = DInput.get().strip()
     bar['value'] = 0
     items = IInput.get().strip()
@@ -50,16 +57,25 @@ def fileNav(filePath, itemList):
             
 def pullExcel(matchingFolders):
     ExcelFilePaths = []
-    stepValue=100/(len(matchingFolders))
+    try:
+        stepValue=100/(len(matchingFolders))
+    except ZeroDivisionError as e:
+        print("Cannot divide by zero, most likely no input in form")
     for folder in matchingFolders:
+        excelFiles = []
         pattern = os.path.join(folder, '*.xlsx')
        # print(f"Searching for Excel files with pattern: {pattern}")
         for file in glob.glob(pattern):
-            print(f"Found Excel File: {file}")
+            excelFiles.append(file)
+            # print(f"Found Excel File: {file}")
             bar['value'] +=stepValue
             app.update_idletasks()
-            time.sleep(.1)
+        if len(excelFiles)>1:
+            mostRecent = max(excelFiles, key=os.path.getatime)
+            ExcelFilePaths.append(mostRecent)
+        else:
             ExcelFilePaths.append(file)
+    print(ExcelFilePaths)
     
    # processExcelFiles(ExcelFilePaths)
 
