@@ -21,6 +21,7 @@ JOBHOURS = r'C:\Users\ofleischer\OneDrive - MetroTek Electrical\Coding\SampleFil
 
 # Functions
 def submit():
+    print("Beginning Process...")
     directory = DInput.get().strip()
     bar['value'] = 0
     items = IInput.get().strip()
